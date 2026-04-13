@@ -24,7 +24,6 @@ import {
 } from '#root/lib/authHelper.js';
 import { getCache, setCache, deleteCache } from '#root/lib/redisCache.js';
 import { secret } from '#root/config/secret.js';
-import { blacklistToken } from '#root/lib/blacklistToken.js';
 
 
 export const login = async (
@@ -42,7 +41,7 @@ export const login = async (
     const data = LoginSchema.parse(req.body);
     const { name, password } = data;
 
-		const key = `login_password${name}`;
+		const key = `login_password:${name}`;
     const rlUser = await rateLimiterMongo.get(key);
     if(rlUser !== null && rlUser.consumedPoints >= maxLoginAttempts){
 				res.set("Retry-After", String(Math.ceil(rlUser.msBeforeNext / 1000)));
@@ -107,11 +106,6 @@ export const refresh = async (
 
         const refreshToken = req.cookies.jwt;
 
-				const isBlacklisted = await getCache(`bl:${refreshToken}`);
-        if(isBlacklisted){
-            throw unauthorized();
-        }
-
         const decoded = jwt.verify(refreshToken, secret) as DecodedToken;
         const username = decoded.name;
 
@@ -175,8 +169,6 @@ export const register = async(
 						const { accessToken } = setUpLogin(newUser, res);
 						await newUser.login();
 
-						await deleteCache("user_all");
-
             return res.status(200).json({
                 success: true,
                 message: "Account registered",
@@ -197,8 +189,6 @@ export const logout = async (
         const refreshToken = req.cookies?.jwt;
         const decoded = jwt.verify(refreshToken, secret) as DecodedToken;
 
-				await blacklistToken(refreshToken, decoded.exp);
-
         const user = await User.findOne({name: decoded.name});
         await user?.logout();
         await user?.incrementTokenVersion();
@@ -209,6 +199,8 @@ export const logout = async (
 						secure: true,
 						//domain: 'mydomain.com',
 				});
+
+				await deleteCache("accessToken");
 
         return res.status(200).json({
             success: true,

@@ -34,7 +34,7 @@ const authenticate = (
                 const payload = decoded as DecodedToken;
                 const user = await User.findOne({name: payload.name}) as IUser;
                 if(payload.tokenVersion !== user.tokenVersion){
-                    throw unauthorized("Invalid or expired token", { cause: "accessToken" });
+                    throw unauthorized("Invalid Token", { cause: "accessToken" });
                 }
 
                 req.user = payload;
