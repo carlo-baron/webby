@@ -1,5 +1,11 @@
 import { createRateLimiterMiddleware } from '#root/middlewares/rateLimiter.js';
 
+export const defaultLimiter = createRateLimiterMiddleware({
+	keyPrefix: 'auth_default',
+	points: 60,
+	duration: 60
+});
+
 export const refreshLimiter = createRateLimiterMiddleware({
 	keyPrefix: 'refresh',
 	points: 60,
