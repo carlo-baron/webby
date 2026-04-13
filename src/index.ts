@@ -4,8 +4,8 @@ import helmet from 'helmet';
 import cors from 'cors';
 import cookieparser from 'cookie-parser';
 
-import { userRouter } from './routes/users.js';
-import { authRouter } from './routes/auth.js';
+import { userRouter } from './routes/userRoute.js';
+import { authRouter } from './routes/authRoute.js';
 
 import routeValidator from './middlewares/routesHandler.js';
 import errorHandler from './middlewares/errorHandler.js';

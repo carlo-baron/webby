@@ -11,7 +11,7 @@ import {
 } from '#root/middlewares/authorization/authorize.js';
 import {
     isUser
-} from '#root/lib/isUser.js';
+} from '#root/middlewares/isUser.js';
 import { 
 	getMeLimiter,
 	getAllUsersLimiter,
