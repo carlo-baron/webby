@@ -116,7 +116,7 @@ export const refresh = async (
         await user.incrementTokenVersion();
 
         const accessToken = createAccessTokenOnly(user);
-				await setCache("accessToken", JSON.stringify(accessToken), 60*3);
+				await setCache(`accessToken:${username}`, JSON.stringify(accessToken), 60*3);
 
         return res.status(200).json({
             success: true,
@@ -200,7 +200,7 @@ export const logout = async (
 						//domain: 'mydomain.com',
 				});
 
-				await deleteCache("accessToken");
+				await deleteCache(`accessToken:${decoded.name}`);
 
         return res.status(200).json({
             success: true,
