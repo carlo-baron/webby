@@ -6,7 +6,6 @@ import {
     logout,
 		googleCallback,
 } from '#root/controllers/authController.js';
-import authenticate from '#root/middlewares/authenticate.js';
 import { 
 	refreshLimiter,
 	loginLimiter,
@@ -14,13 +13,14 @@ import {
 	googleLimiter,
 	defaultLimiter
 } from '#root/middlewares/rateLimiters/authLimiters.js';
+import authenticate from '#root/middlewares/authenticate.js';
 
 export const authRouter = express.Router();
 
-authRouter.get('/', defaultLimiter, async (req, res, next) => {
+authRouter.get('/', authenticate, defaultLimiter, async (req, res, next) => {
 	res.status(200).json({
 		success: true,
-		message: "This is where authentication happens"
+		message: "User is already authenticated."
 	});
 });
 authRouter.post('/refresh', refreshLimiter, refresh);
